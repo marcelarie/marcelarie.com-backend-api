@@ -1,14 +1,17 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
+mod models;
+mod routes;
+
+use routes::*;
+
 #[macro_use]
 extern crate rocket;
-use rocket_contrib::json::Json;
 
-#[get("/")]
-fn index() -> &'static str {
-    "Hello, world!"
+fn rocket_ignite() -> rocket::Rocket {
+    rocket::ignite().mount("/", routes![index])
 }
 
 fn main() {
-    rocket::ignite().mount("/", routes![index]).launch();
+    rocket_ignite().launch();
 }
