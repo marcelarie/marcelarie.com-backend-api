@@ -1,8 +1,9 @@
-// use super::schema::posts;
+#![allow(proc_macro_derive_resolution_fallback)]
+
+use crate::schema::posts;
 use serde::{Deserialize, Serialize};
 
-
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, AsChangeset, Queryable, Deserialize, Debug)]
 pub struct Post {
     pub id: i32,
     pub title: String,
@@ -10,5 +11,3 @@ pub struct Post {
     pub published: bool,
 }
 
-impl Post {
-}
