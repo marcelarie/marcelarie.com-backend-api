@@ -14,7 +14,7 @@ pub fn create_post(new_post: NewPost, conn: &PgConnection) -> QueryResult<Post> 
 
 pub fn show_all_posts(connection: &PgConnection) -> QueryResult<Vec<Post>> {
     //posts.filter(published.eq(true))
-    posts.limit(5).load::<Post>(&*connection)
+    posts.limit(6).load::<Post>(&*connection)
 }
 
 pub fn get_post(post_id: i32, connection: &PgConnection) -> QueryResult<Post> {
