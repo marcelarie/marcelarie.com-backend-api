@@ -6,23 +6,19 @@ extern crate r2d2;
 extern crate r2d2_diesel;
 #[macro_use]
 extern crate rocket;
-extern crate rocket_contrib;
 extern crate chrono;
+extern crate rocket_contrib;
 
 use dotenv::dotenv;
 
-mod connection;
 mod models;
-mod repositories;
-mod routes;
 mod schema;
 
-use routes::*;
 
 fn rocket_ignite() -> rocket::Rocket {
     rocket::ignite()
-        .manage(connection::init_pool())
-        .mount("/", routes![all_posts, create_post, get_post, update_post, delete_post ])
+    // .manage(connection::init_pool())
+    // .mount("/", routes![all_posts, create_post, get_post, update_post, delete_post ])
 }
 
 fn main() {
