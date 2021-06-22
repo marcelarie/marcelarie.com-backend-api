@@ -1,7 +1,7 @@
 ### ENDPOINTS
 
-1. Add new blog post ---[POST]-> /blog/new
-2. Get all blog posts ---[GET]-> /blog/all
+1. Add new blog post ---[POST]-> /posts
+2. Get all blog posts ---[GET]-> /posts/all
 3. Get post ---[GET]-> /blog/:id
 4. Get user ---[GET]-> /user/:id
 5. Add new user ---[POST]-> /user/new
