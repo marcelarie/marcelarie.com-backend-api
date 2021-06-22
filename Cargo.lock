@@ -238,6 +238,7 @@ dependencies = [
  "chrono",
  "diesel_derives",
  "pq-sys",
+ "r2d2",
 ]
 
 [[package]]
@@ -908,11 +909,26 @@ version = "0.4.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6b6303dccab46dce6c7ac26c9b9d8d8cde1b19614b027c3f913be6611bff6d9b"
 dependencies = [
+ "diesel",
  "log 0.4.14",
  "notify",
+ "r2d2",
  "rocket",
+ "rocket_contrib_codegen",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "rocket_contrib_codegen"
+version = "0.4.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a0f2cbcb6c09b3ac0acdf77682ff8c9d1f317361498a773ee50b32be7fddfe2b"
+dependencies = [
+ "devise",
+ "quote 0.6.13",
+ "version_check 0.9.3",
+ "yansi",
 ]
 
 [[package]]
