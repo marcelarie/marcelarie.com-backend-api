@@ -6,23 +6,36 @@ extern crate r2d2;
 extern crate r2d2_diesel;
 #[macro_use]
 extern crate rocket;
-extern crate rocket_contrib;
 extern crate chrono;
-
-use dotenv::dotenv;
+extern crate rocket_contrib;
 
 mod connection;
 mod models;
-mod repositories;
-mod routes;
 mod schema;
 
-use routes::*;
+use crate::schema::posts;
+use connection::DbConn;
+use diesel::prelude::*;
+use models::post::{NewPost, Post};
+use rocket_contrib::json::Json;
+
+// Routes (Handlers)
+// 1. Add new blog post ---[POST]-> /posts
+#[post("/", format = "application/json", data = "<new_post>")]
+fn create_post(new_post: Json<NewPost>, connection: DbConn) -> Json<Post> {
+    let result = diesel::insert_into(posts::table)
+        .values(&new_post.0)
+        .get_result(&*connection) // <-- `&*c` init_pool connections defers to PgConnection
+        .unwrap(); // <-- not handeling errors for the moment
+    Json(result)
+}
+
+// Repository
 
 fn rocket_ignite() -> rocket::Rocket {
     rocket::ignite()
         .manage(connection::init_pool())
-        .mount("/", routes![all_posts, create_post, get_post, update_post, delete_post ])
+        .mount("/posts", routes![create_post])
 }
 
 fn main() {

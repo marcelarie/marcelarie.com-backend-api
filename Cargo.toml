@@ -19,7 +19,8 @@ r2d2 = "0.8"
 [dependencies.rocket_contrib]
 version ="*"
 default-features = false
-features = ["json"]
+features = ["json", "diesel_postgres_pool"]
+        
 
 [dependencies.diesel]
 version = "1"
