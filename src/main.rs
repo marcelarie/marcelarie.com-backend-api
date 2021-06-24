@@ -22,6 +22,30 @@ use rocket_contrib::json::Json;
 use diesel::result::Error;
 use rocket::response::Debug;
 
+use rocket::fairing::{Fairing, Info, Kind};
+use rocket::http::Header;
+use rocket::{Request, Response};
+
+pub struct CORS;
+
+impl Fairing for CORS {
+    fn info(&self) -> Info {
+        Info {
+            name: "Add CORS headers to responses",
+            kind: Kind::Response,
+        }
+    }
+    fn on_response(&self, _request: &Request, response: &mut Response) {
+        response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
+        response.set_header(Header::new(
+            "Access-Control-Allow-Methods",
+            "POST, GET, PATCH, OPTIONS",
+        ));
+        response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
+        // response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
+    }
+}
+
 // Routes (Handlers)
 // 1. Add new blog post ---[POST]-> /posts
 #[post("/", format = "application/json", data = "<new_post>")]
@@ -44,6 +68,7 @@ fn get_all_posts(connection: DbConn) -> Result<Json<Vec<Post>>, Debug<Error>> {
 #[get("/<id>")]
 fn get_post_by_id(id: i32, connection: DbConn) -> Result<Json<Post>, Debug<Error>> {
     let result = posts::table.find(id).get_result::<Post>(&*connection)?;
+    println!("{:#?}", result);
 
     Ok(Json(result))
 }
@@ -54,10 +79,13 @@ fn get_post_by_id(id: i32, connection: DbConn) -> Result<Json<Post>, Debug<Error
 // Repository
 
 fn rocket_ignite() -> rocket::Rocket {
-    rocket::ignite().manage(connection::init_pool()).mount(
-        "/posts",
-        routes![create_post, get_all_posts, get_post_by_id],
-    )
+    rocket::ignite()
+        .attach(CORS)
+        .manage(connection::init_pool())
+        .mount(
+            "/posts",
+            routes![create_post, get_all_posts, get_post_by_id],
+        )
     // .mount("/", routes![all_posts, create_post, get_post, update_post, delete_post ])
 }
 

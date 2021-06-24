@@ -4,10 +4,12 @@ use crate::schema::posts;
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
+// the struct must be in the same order than the database object
 #[derive(Serialize, AsChangeset, Queryable, Deserialize, Debug)]
 pub struct Post {
     pub id: i32,
     pub title: String,
+    pub description: String,
     pub body: String,
     pub created_at: NaiveDateTime,
     pub published: bool,
@@ -18,4 +20,5 @@ pub struct Post {
 pub struct NewPost {
     pub title: String,
     pub body: String,
+    pub description: String,
 }
