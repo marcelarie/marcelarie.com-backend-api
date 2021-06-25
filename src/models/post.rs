@@ -5,7 +5,7 @@ use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
 // the struct must be in the same order than the database object
-#[derive(Serialize, AsChangeset, Queryable, Deserialize, Debug)]
+#[derive(Serialize, Queryable, AsChangeset, Deserialize, Debug)]
 pub struct Post {
     pub id: i32,
     pub title: String,
@@ -15,10 +15,10 @@ pub struct Post {
     pub published: bool,
 }
 
-#[derive(Insertable, Serialize, Deserialize)]
+#[derive(AsChangeset, Insertable, Serialize, Deserialize, Debug)]
 #[table_name = "posts"]
 pub struct NewPost {
-    pub title: String,
-    pub body: String,
-    pub description: String,
+    pub title: Option<String>,
+    pub body: Option<String>,
+    pub description: Option<String>,
 }

@@ -22,29 +22,6 @@ use rocket_contrib::json::Json;
 use diesel::result::Error;
 use rocket::response::Debug;
 
-use rocket::fairing::{Fairing, Info, Kind};
-use rocket::http::Header;
-use rocket::{Request, Response};
-
-pub struct CORS;
-
-impl Fairing for CORS {
-    fn info(&self) -> Info {
-        Info {
-            name: "Add CORS headers to responses",
-            kind: Kind::Response,
-        }
-    }
-    fn on_response(&self, _request: &Request, response: &mut Response) {
-        response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
-        response.set_header(Header::new(
-            "Access-Control-Allow-Methods",
-            "POST, GET, PATCH, OPTIONS",
-        ));
-        response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
-        response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
-    }
-}
 
 // Routes (Handlers)
 // 1. Add new blog post ---[POST]-> /posts
@@ -80,19 +57,40 @@ fn delete_post_by_id(id: i32, connection: DbConn) -> Result<Json<usize>, Debug<E
     Ok(Json(result))
 }
 
-// 5. Get user ---[GET]-> /user/:id
-// 7. Add new user ---[POST]-> /user/new
+// 5.  Update Post ---[PUT]-> /posts/:id
+#[put("/<id>", format = "application/json", data = "<post>")]
+fn update_post_by_id(
+    id: i32,
+    post: Json<NewPost>,
+    connection: DbConn,
+) -> Result<Json<usize>, Debug<Error>> {
+    println!("{:#?}", post);
+    let result = diesel::update(posts::table.find(id))
+        .set(&*post)
+        .execute(&*connection)?;
+    Ok(Json(result))
+}
+// 6.  Get all posts by Year ---[DELETE]-> /posts/all-by-year
+
+// 7. Get user ---[GET]-> /user/:id
+// 8. Add new user ---[POST]-> /user/new
 // 9. Add new comment ---[POST]-> /comment/new
 
 // Repository
 
 fn rocket_ignite() -> rocket::Rocket {
     rocket::ignite()
-        .attach(CORS)
+        // .attach(CORS)
         .manage(connection::init_pool())
         .mount(
             "/posts",
-            routes![create_post, get_all_posts, get_post_by_id, delete_post_by_id],
+            routes![
+                create_post,
+                get_all_posts,
+                get_post_by_id,
+                delete_post_by_id,
+                update_post_by_id
+            ],
         )
     // .mount("/", routes![all_posts, create_post, get_post, update_post, delete_post ])
 }
