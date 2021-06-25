@@ -22,21 +22,24 @@ use rocket_contrib::json::Json;
 use diesel::result::Error;
 use rocket::response::Debug;
 
-
 // Routes (Handlers)
 // 1. Add new blog post ---[POST]-> /posts
 #[post("/", format = "application/json", data = "<new_post>")]
 fn create_post(new_post: Json<NewPost>, connection: DbConn) -> Result<Json<Post>, Debug<Error>> {
-    let result = diesel::insert_into(posts::table)
+    let result: Post = diesel::insert_into(posts::table)
         .values(&new_post.0)
         .get_result(&*connection)?; // <-- `&*c` init_pool connections defers to PgConnection
+
+    println!("{:#?}", result.id);
 
     Ok(Json(result))
 }
 // 2. Get all blog posts ---[GET]-> /posts/all
-#[get("/all")]
+#[get("/")]
 fn get_all_posts(connection: DbConn) -> Result<Json<Vec<Post>>, Debug<Error>> {
-    let result = posts::table.load::<Post>(&*connection)?;
+    let result = posts::table
+        .order(posts::id.desc())
+        .load::<Post>(&*connection)?;
 
     Ok(Json(result))
 }
@@ -45,7 +48,6 @@ fn get_all_posts(connection: DbConn) -> Result<Json<Vec<Post>>, Debug<Error>> {
 #[get("/<id>")]
 fn get_post_by_id(id: i32, connection: DbConn) -> Result<Json<Post>, Debug<Error>> {
     let result = posts::table.find(id).get_result::<Post>(&*connection)?;
-    println!("{:#?}", result);
 
     Ok(Json(result))
 }
@@ -70,7 +72,6 @@ fn update_post_by_id(
         .execute(&*connection)?;
     Ok(Json(result))
 }
-// 6.  Get all posts by Year ---[DELETE]-> /posts/all-by-year
 
 // 7. Get user ---[GET]-> /user/:id
 // 8. Add new user ---[POST]-> /user/new
