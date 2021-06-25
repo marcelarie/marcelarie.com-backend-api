@@ -10,6 +10,7 @@ extern crate chrono;
 extern crate rocket_contrib;
 
 mod connection;
+mod guards;
 mod models;
 mod schema;
 
@@ -17,10 +18,11 @@ use crate::schema::posts;
 use connection::DbConn;
 use diesel::prelude::*;
 use models::post::{NewPost, Post};
-use rocket_contrib::json::Json;
+use rocket::response::Debug;
+use guards::CORS;
 // Responses/ Errors
 use diesel::result::Error;
-use rocket::response::Debug;
+use rocket_contrib::json::Json;
 
 // Routes (Handlers)
 // 1. Add new blog post ---[POST]-> /posts
@@ -81,7 +83,7 @@ fn update_post_by_id(
 
 fn rocket_ignite() -> rocket::Rocket {
     rocket::ignite()
-        // .attach(CORS)
+        .attach(CORS)
         .manage(connection::init_pool())
         .mount(
             "/posts",
