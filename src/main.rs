@@ -42,7 +42,7 @@ impl Fairing for CORS {
             "POST, GET, PATCH, OPTIONS",
         ));
         response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
-        // response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
+        response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
     }
 }
 
@@ -72,9 +72,17 @@ fn get_post_by_id(id: i32, connection: DbConn) -> Result<Json<Post>, Debug<Error
 
     Ok(Json(result))
 }
-// 4. Get user ---[GET]-> /user/:id
-// 5. Add new user ---[POST]-> /user/new
-// 6. Add new comment ---[POST]-> /comment/new
+
+// 4. Delete post ---[DELETE]-> /posts/:id
+#[delete("/<id>")]
+fn delete_post_by_id(id: i32, connection: DbConn) -> Result<Json<usize>, Debug<Error>> {
+    let result = diesel::delete(posts::table.find(id)).execute(&*connection)?;
+    Ok(Json(result))
+}
+
+// 5. Get user ---[GET]-> /user/:id
+// 7. Add new user ---[POST]-> /user/new
+// 9. Add new comment ---[POST]-> /comment/new
 
 // Repository
 
@@ -84,7 +92,7 @@ fn rocket_ignite() -> rocket::Rocket {
         .manage(connection::init_pool())
         .mount(
             "/posts",
-            routes![create_post, get_all_posts, get_post_by_id],
+            routes![create_post, get_all_posts, get_post_by_id, delete_post_by_id],
         )
     // .mount("/", routes![all_posts, create_post, get_post, update_post, delete_post ])
 }
