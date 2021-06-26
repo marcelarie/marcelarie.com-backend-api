@@ -1,2 +1,2 @@
-web: ROCKET_PORT=$PORT ROCKET_ENV=prod ./target/release/rust-api
+web: ROCKET_PORT=$PORT ROCKET_ENV=prod ./target/release/marcelarie-backend-api
 
