@@ -95,7 +95,6 @@ fn rocket_ignite() -> rocket::Rocket {
                 update_post_by_id
             ],
         )
-    // .mount("/", routes![all_posts, create_post, get_post, update_post, delete_post ])
 }
 
 fn main() {
