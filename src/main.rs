@@ -17,9 +17,9 @@ mod schema;
 use crate::schema::posts;
 use connection::DbConn;
 use diesel::prelude::*;
+use guards::CORS;
 use models::post::{NewPost, Post};
 use rocket::response::Debug;
-use guards::CORS;
 // Responses/ Errors
 use diesel::result::Error;
 use rocket_contrib::json::Json;
@@ -32,7 +32,7 @@ fn create_post(new_post: Json<NewPost>, connection: DbConn) -> Result<Json<Post>
         .values(&new_post.0)
         .get_result(&*connection)?; // <-- `&*c` init_pool connections defers to PgConnection
 
-    println!("{:#?}", result.id);
+    // println!("{:#?}", result.id);
 
     Ok(Json(result))
 }
@@ -68,7 +68,7 @@ fn update_post_by_id(
     post: Json<NewPost>,
     connection: DbConn,
 ) -> Result<Json<usize>, Debug<Error>> {
-    println!("{:#?}", post);
+    // println!("{:#?}", post);
     let result = diesel::update(posts::table.find(id))
         .set(&*post)
         .execute(&*connection)?;
