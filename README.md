@@ -1,4 +1,3 @@
-# back-marcelarie.com
+# marcelarie.com API
 
-
-[Client](https://github.com/marcelarie/marcelarie.com) 
+[Client](https://github.com/marcelarie/marcelarie.com)
